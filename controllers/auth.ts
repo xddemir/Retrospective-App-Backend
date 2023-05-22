@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
-import User, { IUser } from "../models/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import User from "../models/user";
 
 export function signUp(req: any, res: any, next: any) {
   const errors = validationResult(req);

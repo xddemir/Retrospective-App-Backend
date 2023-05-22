@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, model, Model } from "mongoose";
+import { Schema, model, Model } from "mongoose";
 
 export interface IUser extends Model<Document> {
   name: string;
@@ -6,39 +6,71 @@ export interface IUser extends Model<Document> {
   required: string;
   password: string;
   isAdmin: boolean;
+  currentSessions: any;
   retrospectiveHistory: any;
-  questions: any;
+  madAnswers: any;
+  gladAnswers: any;
+  sadAnswers: any;
 }
 
-export const userSchema = new Schema<IUser>({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  isAdmin: {
-    type: Boolean,
-  },
-  retrospectiveHistory: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "retrospective",
+export const personelSchema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-  ],
-  questions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "question",
-    },
-  ],
-});
 
-const User = model<IUser>("user", userSchema);
+    email: {
+      type: String,
+      required: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+    },
+
+    isAdmin: {
+      type: Boolean,
+    },
+
+    currentSessions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "retrospective",
+      },
+    ],
+
+    madAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
+
+    gladAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
+
+    sadAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
+
+    retrospectiveHistory: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "retrospective",
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+const User = model<IUser>("user", personelSchema);
 export default User;

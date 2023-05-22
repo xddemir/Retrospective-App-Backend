@@ -7,36 +7,62 @@ export interface IRetro extends Collection {
   date: string;
   creatorId: Schema.Types.ObjectId;
   questions: Schema.Types.ObjectId;
+  madAnswers: any;
+  gladAnswers: any;
+  sadAnswers: any;
 }
 
-const retroSchema = new Schema<IRetro>({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  users: [
-    {
-      type: Schema.Types.ObjectId,
+const retroSchema = new Schema<IRetro>(
+  {
+    title: {
+      type: String,
+      required: true,
     },
-  ],
-  date: {
-    type: String,
-    required: true,
+    description: {
+      type: String,
+      required: true,
+    },
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
+    date: {
+      type: String,
+      required: true,
+    },
+    creatorId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    questions: {
+      type: Schema.Types.ObjectId,
+      ref: "question",
+    },
+    madAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
+
+    gladAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
+
+    sadAnswers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "answer",
+      },
+    ],
   },
-  creatorId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  questions: {
-    type: Schema.Types.ObjectId,
-    ref: "question",
-  },
-});
+  { timestamps: true }
+);
 
 const Retro = model<IRetro>("retrospective", retroSchema);
 export default Retro;

@@ -110,3 +110,10 @@ export const getAllRetrospectiveHistory = (req: any, res: any, next: any) => {
 
 }
 
+export const updateUser = (req: any, res: any, next: any) => {
+
+}
+
+export const getRetroById = (req: any, res: any, next: any) => {
+  
+}

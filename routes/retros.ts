@@ -1,12 +1,11 @@
 import { Router } from "express";
 import IsAuth from "../auth/auth";
 import {
+  addUser,
   createRetro,
-  deleteRetroById,
   getAllRetros,
-  getAllUsersInRetro,
   getRetroById,
-  postUserToRetro,
+  getUsers,
   updateRetroById,
 } from "../controllers/retros";
 
@@ -18,8 +17,8 @@ retrosRouter.put("/put/:retroId", IsAuth, updateRetroById);
 // POST /posts/post
 retrosRouter.post("/post", IsAuth, createRetro);
 
-// POST /add/:userId
-retrosRouter.post("/add", IsAuth, postUserToRetro);
+// POST /addUser
+retrosRouter.post("/addUser/:sessionToken", addUser)
 
 // GET /get/:retroId
 retrosRouter.get("/get/:retroId", IsAuth, getRetroById);
@@ -28,9 +27,6 @@ retrosRouter.get("/get/:retroId", IsAuth, getRetroById);
 retrosRouter.get("/gets", IsAuth, getAllRetros);
 
 // GET /allUsers/:retroId
-retrosRouter.get("/allUsers/:retroId", getAllUsersInRetro);
-
-// DELETE /delete/:retroId
-retrosRouter.delete("/delete/:retroId", IsAuth, deleteRetroById);
+retrosRouter.get("/allUsers/:retroId", getUsers);
 
 export default retrosRouter;
