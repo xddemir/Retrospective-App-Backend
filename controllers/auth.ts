@@ -26,7 +26,6 @@ export function signUp(req: any, res: any, next: any) {
         password: result,
         isAdmin: isAdmin,
       });
-
       return user.save();
     })
     .then((result: { _id: any }) => {
