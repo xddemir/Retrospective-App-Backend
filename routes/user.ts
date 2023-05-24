@@ -4,6 +4,7 @@ import {
   getUserById,
   updateUser,
 } from "../controllers/user";
+import IsAuth from "../auth/auth";
 
 const userRouter = Router();
 
@@ -14,9 +15,9 @@ userRouter.get("/:userId", getUserById);
 userRouter.get("questions/:userId", getAllQuestionsByUserId);
 
 // GET /retrospective/:userId
-userRouter.get("retrospective/:userId", );
+userRouter.get("retrospective/:userId" );
 
 // PUT /update
-userRouter.put("/update", updateUser);
+userRouter.put("/update", IsAuth, updateUser);
 
 export default userRouter;

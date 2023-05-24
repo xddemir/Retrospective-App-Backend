@@ -1,8 +1,11 @@
 import { validationResult } from "express-validator";
 import Retro from "../models/retrospective";
 import User from "../models/user";
-import { setCache, getCache} from "../services/cache";
+import { setCache, getCache } from "../services/cache";
 import jwt from "jsonwebtoken";
+import Answer from "../models/answer";
+import checkAnswerType from "../utils/util";
+import { AnswerTypes } from "../models/question";
 
 export const createRetro = (req: any, res: any, next: any) => {
   const errors = validationResult(req);
@@ -80,7 +83,7 @@ export const getAllRetros = (req: any, res: any, next: any) => {
 
   Retro.find()
     .then((retros) => {
-      res.status(200).json({
+      res.status(201).json({
         message: "Fetched All Retrospectives",
         retros: retros,
       });
@@ -201,7 +204,7 @@ export const updateRetroById = (req: any, res: any, next: any) => {
     })
     .then((result) => {
       res
-        .status(200)
+        .status(201)
         .json({ message: "Retrospective Updated!", retro: result });
     })
     .catch((err) => {
@@ -256,7 +259,7 @@ export const addUser = (req: any, res: any, next: any) => {
       return setCache(sessionId, 15, () => session);
     })
     .then((result: any) => {
-      res.status(200).json({
+      res.status(201).json({
         message: "User Added!",
         user: result,
       });
@@ -265,6 +268,61 @@ export const addUser = (req: any, res: any, next: any) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      next(err);
+    });
+};
+
+export const addAnswer = (req: any, res: any, next: any) => {
+  const error = validationResult(req);
+  if (!error.isEmpty()) {
+    const error: any = new Error(
+      "Validation Failed, entered data is incorrect."
+    );
+    error.statusCode = 422;
+    throw error;
+  }
+
+  const answerType =
+    checkAnswerType(req.body.answerType) && req.body.answerType.toUpperCase();
+
+  const answer = new Answer({
+    content: req.body.content,
+    answerType: answerType,
+    creatorId: req.userId,
+  });
+
+  getCache(req.userId)
+    .then((retro: any) => {
+      if (!retro) {
+        const error: any = new Error("Retro couldn't be found");
+        error.statusCode = 402;
+        throw error;
+      }
+
+      return setCache(req.userId, 15, () => {
+        let user = retro.users.find(
+          (user: any) => user._id.toString() == req.userId
+        );
+
+        if (answerType === AnswerTypes.GLAD) {
+          retro.gladAnswers.push(answer);
+          user.gladAnswers.push(answer);
+        } else if (answerType === AnswerTypes.SAD) {
+          retro.sadAnswers.push(answer);
+          user.sadAnswers.push(answer);
+        } else if (answerType === AnswerTypes.MAD) {
+          retro.madAnswers.push(answer);
+          user.madAnswers.push(answer);
+        }
+      });
+    })
+    .then((result: any) => {
+      res
+        .status(201)
+        .json({ message: "Answer added", answer: answer, retro: result });
+    })
+    .catch((err: any) => {
+      console.log(err);
       next(err);
     });
 };

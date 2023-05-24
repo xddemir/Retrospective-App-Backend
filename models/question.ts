@@ -1,34 +1,27 @@
 import { Schema, model } from "mongoose";
 
-export interface IQuestion {
-  name: string;
+export enum AnswerTypes {
+  MAD = "MAD",
+  SAD = "SAD",
+  GLAD = "GLAD"
+}
+
+export interface IAnswer{
   content: string;
-  questionType: string;
-  answer: string;
+  answerType: keyof typeof AnswerTypes;
   creatorId: Schema.Types.ObjectId;
 }
 
-const questionSchema = new Schema<IQuestion>({
-  name: {
-    type: String,
-    required: true,
-  },
+const answerSchema = new Schema<IAnswer>({
   content: {
     type: String,
     required: true,
   },
 
-  questionType: {
+  answerType: {
     type: String,
     required: true,
   },
-
-  answer: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
 
   creatorId: {
     type: Schema.Types.ObjectId,
@@ -36,5 +29,5 @@ const questionSchema = new Schema<IQuestion>({
   },
 });
 
-const Question = model<IQuestion>("question", questionSchema);
-export default Question;
+const Answer = model<IAnswer>("answer", answerSchema);
+export default Answer;

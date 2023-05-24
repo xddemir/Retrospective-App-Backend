@@ -5,6 +5,9 @@ import { getCache } from "../services/cache";
 import { OutlookSender } from "../services/mail";
 
 export function inviteUser(req: any, res: any, next: any) {
+
+  const userEmail = req.body.email;
+
   const errors = validationResult(error);
   if (!errors.isEmpty()) {
     const error: any = new Error("Validation Failed.");
@@ -47,7 +50,7 @@ export function inviteUser(req: any, res: any, next: any) {
 
       return sender.sendMail({
         from: process.env.EMAIL_USER!,
-        to: "",
+        to: userEmail,
         subject: "Retro Invitation Link",
         text: linkUrl,
       });
