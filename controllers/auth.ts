@@ -31,7 +31,7 @@ export function signUp(req: any, res: any, next: any) {
     .then((result: { _id: any }) => {
       res.status(201).json({ message: "User Created", userId: result._id });
     })
-    .catch((err: Error) => {
+    .catch((err: any) => {
       console.log(err);
     });
 }
