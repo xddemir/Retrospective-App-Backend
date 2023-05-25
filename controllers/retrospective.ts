@@ -5,7 +5,7 @@ import { setCache, getCache } from "../services/cache";
 import jwt from "jsonwebtoken";
 import Answer from "../models/answer";
 import checkAnswerType from "../utils/util";
-import { AnswerTypes } from "../models/question";
+import { AnswerTypes } from "../models/answer";
 
 export const createRetro = (req: any, res: any, next: any) => {
   const errors = validationResult(req);
@@ -46,7 +46,7 @@ export const createRetro = (req: any, res: any, next: any) => {
       creator = user;
 
       // TODO: key value might be changed in the future development (Dogukan Demir)
-      console.log(req.userId);
+      console.log("Session Key: " + req.userId);
       await setCache(req.userId, 1500, () => {
         user.currentSessions.push(retro);
         return retro;
@@ -71,7 +71,7 @@ export const createRetro = (req: any, res: any, next: any) => {
     });
 };
 
-export const getAllRetros = (req: any, res: any, next: any) => {
+export const getRetro = (req: any, res: any, next: any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error: any = new Error(
@@ -81,34 +81,7 @@ export const getAllRetros = (req: any, res: any, next: any) => {
     throw error;
   }
 
-  Retro.find()
-    .then((retros) => {
-      res.status(201).json({
-        message: "Fetched All Retrospectives",
-        retros: retros,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
-};
-
-export const getRetroById = (req: any, res: any, next: any) => {
-  const retroId = req.params.retroId;
-
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error: any = new Error(
-      "Validation Failed, entered data is incorrect."
-    );
-    error.statusCode = 422;
-    throw error;
-  }
-
-  Retro.findById(retroId)
+  Retro.findById(req.userId)
     .then((retro) => {
       if (!retro) {
         const error: any = new Error("Couldn't find the retro");
@@ -163,11 +136,17 @@ export const getAnswers = (req: any, res: any, next: any) => {
       throw error;
     }
 
-    res.status(200).json({ Answers: retro });
+    res
+      .status(200)
+      .json({
+        MadAnswers: retro.madAnswers,
+        GladAnswers: retro.gladAnswers,
+        SadAnswers: retro.sadAnswers,
+      });
   });
 };
 
-export const updateRetroById = (req: any, res: any, next: any) => {
+export const updateRetro = (req: any, res: any, next: any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error: any = new Error(
@@ -236,10 +215,15 @@ export const addUser = (req: any, res: any, next: any) => {
   let user: any;
   let sessionId = decodedToken.userId;
 
-  User.findById(req.body?.user?._id)
+  let userId = req.body.userId;
+  let userEmail = req.body.email;
+
+  console.log(userEmail);
+
+  User.find({email: userEmail})
     .then((result: any) => {
       if (!result) {
-        const error: any = new Error("Active session couldn't be found!");
+        const error: any = new Error("Active user not found!");
         error.statusCode = 403;
         throw error;
       }
@@ -256,18 +240,16 @@ export const addUser = (req: any, res: any, next: any) => {
 
       session.users.push(user);
 
-      return setCache(sessionId, 15, () => session);
+      return setCache(sessionId, 1500, () => session);
     })
     .then((result: any) => {
       res.status(201).json({
         message: "User Added!",
-        user: result,
+        sessionId: result.creatorId,
       });
     })
     .catch((err: any) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
+      console.log("Insertion Error: " + err)
       next(err);
     });
 };
@@ -282,6 +264,15 @@ export const addAnswer = (req: any, res: any, next: any) => {
     throw error;
   }
 
+
+  const currentSessionId =  req.body.sessionId;
+
+  if(!currentSessionId){
+    const error: any = new Error("Active Retro couldn't be found");
+    error.statusCode = 204;
+    throw error;
+  }
+
   const answerType =
     checkAnswerType(req.body.answerType) && req.body.answerType.toUpperCase();
 
@@ -291,7 +282,7 @@ export const addAnswer = (req: any, res: any, next: any) => {
     creatorId: req.userId,
   });
 
-  getCache(req.userId)
+  getCache(currentSessionId)
     .then((retro: any) => {
       if (!retro) {
         const error: any = new Error("Retro couldn't be found");
@@ -299,7 +290,7 @@ export const addAnswer = (req: any, res: any, next: any) => {
         throw error;
       }
 
-      return setCache(req.userId, 15, () => {
+      return setCache(currentSessionId, 15, () => {
         let user = retro.users.find(
           (user: any) => user._id.toString() == req.userId
         );
@@ -325,4 +316,8 @@ export const addAnswer = (req: any, res: any, next: any) => {
       console.log(err);
       next(err);
     });
+};
+
+export const endRetro = (req: any, res: any, next: any) => {
+
 };

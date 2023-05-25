@@ -1,9 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import retrosRouter from "./routes/retros";
+import retrosRouter from "./routes/retrospective";
 import authRouter from "./routes/auth";
 import inviteRouter from "./routes/invite";
+import userRouter from "./routes/user";
 
 
 const app = express();
@@ -22,7 +23,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRouter)
-app.use("/retros", retrosRouter)
+app.use("/retrospectives", retrosRouter)
+app.use("/user", userRouter)
 app.use("/invite-user", inviteRouter)
 
 mongoose

@@ -1,33 +1,33 @@
 import { Schema, model } from "mongoose";
 
-export interface IAnswer {
-  name: string;
+export enum AnswerTypes {
+  MAD = "MAD",
+  SAD = "SAD",
+  GLAD = "GLAD"
+}
+
+export interface IAnswer{
   content: string;
-  questionType: string;
+  answerType: keyof typeof AnswerTypes;
   creatorId: Schema.Types.ObjectId;
 }
 
-const answersSchema = new Schema<IAnswer>(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
-    questionType: {
-      type: String,
-      required: true,
-    },
-    creatorId: {
-      type: Schema.Types.ObjectId,
-      require: true,
-    },
+const answerSchema = new Schema<IAnswer>({
+  content: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
 
-const Answer = model<IAnswer>("answer", answersSchema);
+  answerType: {
+    type: String,
+    required: true,
+  },
+
+  creatorId: {
+    type: Schema.Types.ObjectId,
+    require: true,
+  },
+});
+
+const Answer = model<IAnswer>("answer", answerSchema);
 export default Answer;

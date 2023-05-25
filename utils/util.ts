@@ -1,4 +1,4 @@
-import { AnswerTypes } from "../models/question";
+import { AnswerTypes } from "../models/answer";
 
 export default function checkAnswerType(answer: String) {
   return Object.values(AnswerTypes).includes(
