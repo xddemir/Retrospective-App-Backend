@@ -3,13 +3,11 @@ name: Continuous Integration Workflow
 # This workflow is triggered whenever a new PR is created on the main branch
 on:
   pull_request:
-    branches:
-      - main 
+    branches: [ main ] 
     paths:
       - './'
   push:
-    branches:
-      - main
+    branches: [ main ] 
     paths:
       - './'
 
