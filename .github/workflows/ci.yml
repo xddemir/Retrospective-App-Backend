@@ -4,12 +4,12 @@ name: Continuous Integration Workflow
 on:
   pull_request:
     branches:
-      - product 
+      - main 
     paths:
       - './'
   push:
     branches:
-      - product
+      - main
     paths:
       - './'
 
