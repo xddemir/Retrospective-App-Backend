@@ -23,7 +23,8 @@
 
 ## 🧐 About <a name = "about"></a>
 Retrospective backend service based on session model that holds the active retro with all included information then provides user to make CRUD operations
-in a efficient way. When the session has been closed it transfers the current session to mongodb.
+in a efficient way. When the session has been closed it transfers the current session to mongodb. There are two different users, Admin creates retro and be able to host the whole session and the users that are not logged in receives an email link with a temporary token
+and can access the session via the url
 
 Server-side technologies and futures used with:
 ```
@@ -31,6 +32,7 @@ Express.js
 JWT
 Mongodb
 Redis
+Email
 ```
 
 ## 🎈 Usage <a name = "usage"></a>
