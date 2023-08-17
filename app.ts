@@ -28,7 +28,7 @@ app.use("/user", userRouter)
 app.use("/invite-user", inviteRouter)
 
 mongoose
-  .connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.jirq26m.mongodb.net/test`)
+  .connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.CLUSTER}test`)
   .then((res) => {
     console.log("Connection Succeeded");
     app.listen(process.env.PORT);
